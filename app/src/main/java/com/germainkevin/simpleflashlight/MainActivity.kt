@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
             .hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)
     }
 
-    // what camera [front/back]
+    // what camera [front/back] (la camera qui doit etre utiliser pour allumer la flash)
     private var mCameraId: String? = null
 
     private lateinit var mFlashStateTv: TextView // texte qui montre si la torche est allumee ou non
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         mFlashStateTv = findViewById(R.id.mFlashStateTv)
         findViewById<FloatingActionButton>(R.id.mPowerButton).setOnClickListener {
-            if (canFlashBeUsed) toggleTorchState() else Toast.makeText(
+            if (canFlashBeUsed()) toggleTorchState() else Toast.makeText(
                 applicationContext,
                 "Cet appareil n'a pas de torche",
                 Toast.LENGTH_LONG
@@ -46,13 +46,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val canFlashBeUsed: Boolean
-        get() {
-            return if (isFlashAvailable) {
-                mCameraId = mCameraManager.cameraIdList[0]
-                true
-            } else false
-        }
+    // Verifie si on peut utiliser une flash dans cet appareil
+    // si on peut ca retourne true sinon ca retourne false
+    private fun canFlashBeUsed(): Boolean {
+        return if (isFlashAvailable) {
+            mCameraId = mCameraManager.cameraIdList[0]
+            true
+        } else false
+    }
 
     private fun toggleTorchState() {
         mCameraId?.let {
